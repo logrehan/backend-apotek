@@ -1,0 +1,7 @@
+pola pada controller semuanya kurang lebih seperti ini 
+1. Ambil input (params / body) //params berdasarkan parameter dan biasanya itu id, sedangkan body itu ngambil data yang datanya itu string
+2. Validasi input //ngasih validasi logika contohnya yang sering logika if, kalo ini muncul respon apa, kalo itu apa
+3. Ambil data dari database 
+4. Validasi kondisi (ada/tidak, stok cukup/tidak) //sama kayak validasi input
+5. Lakukan aksi (create / update / delete) //for what? ini bagian utamanya
+6. Return response //responnya apa, kalo berhasil dan kalo error
