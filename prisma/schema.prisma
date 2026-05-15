@@ -3,212 +3,227 @@ generator client {
 }
 
 datasource db {
-  provider = "mysql"
-  url      = env("DATABASE_URL")
+  provider = "postgresql"
+  url = env("DATABASE_URL")
 }
 
 model detail_pembelian {
-  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  id_obat      BigInt    @db.UnsignedBigInt
+  id           BigInt    @id @default(autoincrement())
+  id_obat      BigInt
   jumlah_beli  Int
-  harga_beli   Float     @db.Double
-  subtotal     Float     @db.Double
-  id_pembelian BigInt    @db.UnsignedBigInt
-  created_at   DateTime? @default(now()) @db.Timestamp(0)
-  updated_at   DateTime? @db.Timestamp(0)
+  harga_beli   Float
+  subtotal     Float
+  id_pembelian BigInt
+  created_at   DateTime? @default(now())
+  updated_at   DateTime?
+
   obat         obat      @relation(fields: [id_obat], references: [id])
   pembelian    pembelian @relation(fields: [id_pembelian], references: [id])
 
-  @@index([id_obat], map: "detail_pembelian_id_obat_fkey")
-  @@index([id_pembelian], map: "detail_pembelian_id_pembelian_fkey")
+  @@index([id_obat])
+  @@index([id_pembelian])
 }
 
 model detail_penjualan {
-  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  id_penjualan BigInt    @db.UnsignedBigInt
-  id_obat      BigInt    @db.UnsignedBigInt
+  id           BigInt    @id @default(autoincrement())
+  id_penjualan BigInt
+  id_obat      BigInt
   jumlah_beli  Int
-  harga_beli   Float     @db.Double
+  harga_beli   Float
   subtotal     Int
-  created_at   DateTime? @default(now()) @db.Timestamp(0)
-  updated_at   DateTime? @db.Timestamp(0)
-  obat         obat      @relation(fields: [id_obat], references: [id])
-  penjualan    penjualan @relation(fields: [id_penjualan], references: [id])
+  created_at   DateTime? @default(now())
+  updated_at   DateTime?
 
-  @@index([id_obat], map: "detail_penjualan_id_obat_fkey")
-  @@index([id_penjualan], map: "detail_penjualan_id_penjualan_fkey")
+  obat         obat       @relation(fields: [id_obat], references: [id])
+  penjualan    penjualan  @relation(fields: [id_penjualan], references: [id])
+
+  @@index([id_obat])
+  @@index([id_penjualan])
 }
 
 model distributor {
-  id               BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
-  nama_distributor String      @db.VarChar(50)
-  telepon          String      @db.VarChar(15)
-  alamat           String      @db.VarChar(255)
-  created_at       DateTime?   @default(now()) @db.Timestamp(0)
-  updated_at       DateTime?   @db.Timestamp(0)
+  id               BigInt      @id @default(autoincrement())
+  nama_distributor String
+  telepon          String
+  alamat           String
+  created_at       DateTime?   @default(now())
+  updated_at       DateTime?
+
   pembelian        pembelian[]
 }
 
 model jenis_obat {
-  id         BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  jenis      String    @db.VarChar(50)
-  deskripsi  String?   @db.VarChar(255)
-  created_at DateTime? @default(now()) @db.Timestamp(0)
-  image_url  String?   @db.VarChar(255)
-  updated_at DateTime? @db.Timestamp(0)
+  id         BigInt    @id @default(autoincrement())
+  jenis      String
+  deskripsi  String?
+  created_at DateTime? @default(now())
+  image_url  String?
+  updated_at DateTime?
+
   obat       obat[]
 }
 
 model jenis_pengiriman {
-  id             BigInt                       @id @default(autoincrement()) @db.UnsignedBigInt
+  id             BigInt                       @id @default(autoincrement())
   jenis_kirim    jenis_pengiriman_jenis_kirim
-  nama_ekspedisi String                       @db.VarChar(255)
-  logo_ekspedisi String?                      @db.VarChar(255)
-  created_at     DateTime?                    @default(now()) @db.Timestamp(0)
-  updated_at     DateTime?                    @db.Timestamp(0)
+  nama_ekspedisi String
+  logo_ekspedisi String?
+  created_at     DateTime?                    @default(now())
+  updated_at     DateTime?
+
   penjualan      penjualan[]
 }
 
 model keranjang {
-  id           BigInt    @id @default(autoincrement()) @db.UnsignedBigInt
-  id_pelanggan BigInt    @db.UnsignedBigInt
-  id_obat      BigInt    @db.UnsignedBigInt
-  jumlah_order Float     @db.Double
-  harga        Float     @db.Double
-  subtotal     Float     @db.Double
-  created_at   DateTime? @default(now()) @db.Timestamp(0)
-  updated_at   DateTime? @db.Timestamp(0)
+  id           BigInt    @id @default(autoincrement())
+  id_pelanggan BigInt
+  id_obat      BigInt
+  jumlah_order Float
+  harga        Float
+  subtotal     Float
+  created_at   DateTime? @default(now())
+  updated_at   DateTime?
+
   obat         obat      @relation(fields: [id_obat], references: [id])
   pelanggan    pelanggan @relation(fields: [id_pelanggan], references: [id])
 
-  @@index([id_obat], map: "keranjang_id_obat_fkey")
-  @@index([id_pelanggan], map: "keranjang_id_pelanggan_fkey")
+  @@index([id_obat])
+  @@index([id_pelanggan])
 }
 
 model metode_bayar {
-  id                BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
-  metode_pembayaran String      @db.VarChar(30)
-  tempat_bayar      String      @db.VarChar(50)
-  no_rekening       String?     @db.VarChar(25)
-  url_logo          String?     @db.VarChar(255)
-  created_at        DateTime?   @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?   @db.Timestamp(0)
+  id                BigInt      @id @default(autoincrement())
+  metode_pembayaran String
+  tempat_bayar      String
+  no_rekening       String?
+  url_logo          String?
+  created_at        DateTime?   @default(now())
+  updated_at        DateTime?
+
   penjualan         penjualan[]
 }
 
 model obat {
-  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
-  nama_obat        String             @db.VarChar(100)
+  id               BigInt             @id @default(autoincrement())
+  nama_obat        String
   harga_jual       Int
   stok             Int
-  id_jenis         BigInt             @db.UnsignedBigInt
-  created_at       DateTime?          @default(now()) @db.Timestamp(0)
-  deskripsi_obat   String?            @db.Text
-  foto1            String?            @db.VarChar(255)
-  foto2            String?            @db.VarChar(255)
-  foto3            String?            @db.VarChar(255)
-  updated_at       DateTime?          @db.Timestamp(0)
+  id_jenis         BigInt
+  created_at       DateTime?          @default(now())
+  deskripsi_obat   String?
+  foto1            String?
+  foto2            String?
+  foto3            String?
+  updated_at       DateTime?
+
   detail_pembelian detail_pembelian[]
   detail_penjualan detail_penjualan[]
   keranjang        keranjang[]
-  jenis_obat       jenis_obat         @relation(fields: [id_jenis], references: [id])
 
-  @@index([id_jenis], map: "obat_id_jenis_fkey")
+  jenis_obat       jenis_obat @relation(fields: [id_jenis], references: [id])
+
+  @@index([id_jenis])
 }
 
 model pelanggan {
-  nama_pelanggan String      @db.VarChar(255)
-  email          String      @db.VarChar(255)
-  no_telp        String      @db.VarChar(15)
-  created_at     DateTime?   @default(now()) @db.Timestamp(0)
-  updated_at     DateTime?   @db.Timestamp(0)
-  alamat1        String      @db.VarChar(255)
-  alamat2        String?     @db.VarChar(255)
-  alamat3        String?     @db.VarChar(255)
-  foto           String?     @db.VarChar(255)
-  id             BigInt      @id @default(autoincrement()) @db.UnsignedBigInt
-  katasandi      String      @db.VarChar(255)
-  kodepos1       String      @db.VarChar(255)
-  kodepos2       String?     @db.VarChar(255)
-  kodepos3       String?     @db.VarChar(255)
-  kota1          String      @db.VarChar(255)
-  kota2          String?     @db.VarChar(255)
-  kota3          String?     @db.VarChar(255)
-  propinsi1      String      @db.VarChar(255)
-  propinsi2      String?     @db.VarChar(255)
-  propinsi3      String?     @db.VarChar(255)
-  url_ktp        String?     @db.VarChar(255)
+  id             BigInt      @id @default(autoincrement())
+  nama_pelanggan String
+  email          String
+  no_telp        String
+  created_at     DateTime?   @default(now())
+  updated_at     DateTime?
+  alamat1        String
+  alamat2        String?
+  alamat3        String?
+  foto           String?
+  katasandi      String
+  kodepos1       String
+  kodepos2       String?
+  kodepos3       String?
+  kota1          String
+  kota2          String?
+  kota3          String?
+  propinsi1      String
+  propinsi2      String?
+  propinsi3      String?
+  url_ktp        String?
+
   keranjang      keranjang[]
   penjualan      penjualan[]
 }
 
 model pembelian {
-  id               BigInt             @id @default(autoincrement()) @db.UnsignedBigInt
-  nonota           String             @db.VarChar(100)
-  tgl_pembelian    DateTime           @db.Date
-  total_bayar      Float              @db.Double
-  id_distributor   BigInt             @db.UnsignedBigInt
-  created_at       DateTime?          @default(now()) @db.Timestamp(0)
-  updated_at       DateTime?          @db.Timestamp(0)
-  detail_pembelian detail_pembelian[]
-  distributor      distributor        @relation(fields: [id_distributor], references: [id])
+  id               BigInt             @id @default(autoincrement())
+  nonota           String
+  tgl_pembelian    DateTime
+  total_bayar      Float
+  id_distributor   BigInt
+  created_at       DateTime?          @default(now())
+  updated_at       DateTime?
 
-  @@index([id_distributor], map: "pembelian_id_distributor_fkey")
+  detail_pembelian detail_pembelian[]
+
+  distributor      distributor @relation(fields: [id_distributor], references: [id])
+
+  @@index([id_distributor])
 }
 
 model pengiriman {
-  id           BigInt                  @id @default(autoincrement()) @db.UnsignedBigInt
-  id_penjualan BigInt                  @db.UnsignedBigInt
-  no_invoice   String                  @db.VarChar(255)
-  tgl_kirim    DateTime                @db.DateTime(0)
-  tgl_tiba     DateTime?               @db.DateTime(0)
+  id           BigInt                  @id @default(autoincrement())
+  id_penjualan BigInt
+  no_invoice   String
+  tgl_kirim    DateTime
+  tgl_tiba     DateTime?
   status_kirim pengiriman_status_kirim
-  nama_kurir   String                  @db.VarChar(30)
-  telpon_kurir String                  @db.VarChar(15)
-  bukti_foto   String?                 @db.VarChar(255)
-  keterangan   String?                 @db.Text
-  created_at   DateTime?               @default(now()) @db.Timestamp(0)
-  updated_at   DateTime?               @db.Timestamp(0)
-  penjualan    penjualan               @relation(fields: [id_penjualan], references: [id])
+  nama_kurir   String
+  telpon_kurir String
+  bukti_foto   String?
+  keterangan   String?
+  created_at   DateTime?               @default(now())
+  updated_at   DateTime?
 
-  @@index([id_penjualan], map: "pengiriman_id_penjualan_fkey")
+  penjualan    penjualan @relation(fields: [id_penjualan], references: [id])
+
+  @@index([id_penjualan])
 }
 
 model penjualan {
-  id                BigInt                 @id @default(autoincrement()) @db.UnsignedBigInt
-  id_metode_bayar   BigInt                 @db.UnsignedBigInt
-  tgl_penjualan     DateTime               @db.Date
-  url_resep         String?                @db.VarChar(255)
-  ongkos_kirim      Float                  @db.Double
-  biaya_app         Float                  @db.Double
-  total_bayar       Float                  @db.Double
+  id                BigInt                 @id @default(autoincrement())
+  id_metode_bayar   BigInt
+  tgl_penjualan     DateTime
+  url_resep         String?
+  ongkos_kirim      Float
+  biaya_app         Float
+  total_bayar       Float
   status_order      penjualan_status_order
-  keterangan_status String?                @db.VarChar(255)
-  id_jenis_kirim    BigInt                 @db.UnsignedBigInt
-  id_pelanggan      BigInt                 @db.UnsignedBigInt
-  created_at        DateTime?              @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?              @db.Timestamp(0)
+  keterangan_status String?
+  id_jenis_kirim    BigInt
+  id_pelanggan      BigInt
+  created_at        DateTime?              @default(now())
+  updated_at        DateTime?
+
   detail_penjualan  detail_penjualan[]
   pengiriman        pengiriman[]
-  jenis_pengiriman  jenis_pengiriman       @relation(fields: [id_jenis_kirim], references: [id])
-  metode_bayar      metode_bayar           @relation(fields: [id_metode_bayar], references: [id])
-  pelanggan         pelanggan              @relation(fields: [id_pelanggan], references: [id])
 
-  @@index([id_jenis_kirim], map: "penjualan_id_jenis_kirim_fkey")
-  @@index([id_metode_bayar], map: "penjualan_id_metode_bayar_fkey")
-  @@index([id_pelanggan], map: "penjualan_id_pelanggan_fkey")
+  jenis_pengiriman  jenis_pengiriman @relation(fields: [id_jenis_kirim], references: [id])
+  metode_bayar      metode_bayar     @relation(fields: [id_metode_bayar], references: [id])
+  pelanggan         pelanggan        @relation(fields: [id_pelanggan], references: [id])
+
+  @@index([id_jenis_kirim])
+  @@index([id_metode_bayar])
+  @@index([id_pelanggan])
 }
 
 model users {
-  id                BigInt        @id @default(autoincrement()) @db.UnsignedBigInt
-  email             String        @unique @db.VarChar(255)
-  password          String        @db.VarChar(255)
-  created_at        DateTime?     @default(now()) @db.Timestamp(0)
-  updated_at        DateTime?     @db.Timestamp(0)
-  email_verified_at DateTime?     @db.Timestamp(0)
+  id                BigInt        @id @default(autoincrement())
+  email             String        @unique
+  password          String
+  created_at        DateTime?     @default(now())
+  updated_at        DateTime?
+  email_verified_at DateTime?
   jabatan           users_jabatan
-  name              String        @db.VarChar(255)
-  remember_token    String?       @db.VarChar(100)
+  name              String
+  remember_token    String?
 }
 
 enum jenis_pengiriman_jenis_kirim {
